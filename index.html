@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Generador de Manuales — R&R Importaciones</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/9.0.2/docx.umd.min.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>"><script src="https://cdnjs.cloudflare.com/ajax/libs/docx/9.0.2/docx.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -317,9 +317,33 @@ const LOGO_B64 = '/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAA
 const LOGO_SRC = 'data:image/jpeg;base64,' + LOGO_B64;
 
 // Init logo
-document.getElementById('headerLogo').src = LOGO_SRC;
-document.getElementById('previewLogo').src = LOGO_SRC;
-document.getElementById('previewLogo').style.maxWidth = '160px';
+// Init logo
+let CURRENT_LOGO_SRC = LOGO_SRC;
+function applyLogo(src) {
+  CURRENT_LOGO_SRC = src;
+  document.getElementById('headerLogo').src = src;
+  document.getElementById('previewLogo').src = src;
+  document.getElementById('previewLogo').style.maxWidth = '160px';
+  refreshPreview();
+}
+applyLogo(LOGO_SRC);
+
+// Logo editable — clic en logo del header abre selector
+document.getElementById('headerLogo').style.cursor = 'pointer';
+document.getElementById('headerLogo').title = 'Clic para cambiar el logo';
+document.getElementById('headerLogo').addEventListener('click', () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = ev => applyLogo(ev.target.result);
+    r.readAsDataURL(file);
+  };
+  input.click();
+});
 
 // =============================================
 // STEPS
